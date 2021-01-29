@@ -90,16 +90,18 @@ jobs:
         with:
           name: win-x64
           path: runtimes/win-x64
+      - name: Setup data
+        id: datavars
+        run: echo "::set-output name=version::$(echo ${{ github.ref }} | cut -d'/' -f3 | tail -c +2)"
       - name: Get version, build, and publish
         run: |
           export GIT_HASH=${{ github.sha }}
           export GIT_BRANCH=${GITHUB_REF#refs/heads/}
 
-          export VERSION=`echo ${{ github.ref }} | cut -d'/' -f3 | tail -c +2`
+          export VERSION=${{ steps.datavars.outputs.version }}
           echo $VERSION $GIT_BRANCH
 
-          sed s/%COMMIT%/$GIT_HASH/ < stbi-sharp.csproj > stbi-sharp-build.csproj
-          sed s/%BRANCH%/$GIT_BRANCH/ < stbi-sharp.csproj > stbi-sharp-build.csproj
+          sed "s/%COMMIT%/$GIT_HASH/;s/%BRANCH%/$GIT_BRANCH/" < stbi-sharp.csproj > stbi-sharp-build.csproj
 
           echo Building and packing...
           dotnet pack stbi-sharp-build.csproj -c Release /p:Version=$VERSION
@@ -107,3 +109,7 @@ jobs:
           echo Publishing...
           cd bin/Release
           dotnet nuget push StbiSharp.$VERSION.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+      - uses: actions/upload-artifact@master
+        with:
+          name: nuget-package
+          path: bin/Release/StbiSharp.${{ steps.datavars.outputs.version }}.nupkg
