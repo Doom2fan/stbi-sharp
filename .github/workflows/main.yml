@@ -121,4 +121,4 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: nuget-package
-          path: bin/Release/StbiSharp.${{ steps.datavars.outputs.version }}.nupkg
+          path: bin/Release/phantombeta.StbiSharp.${{ steps.datavars.outputs.version }}.nupkg

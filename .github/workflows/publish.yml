@@ -108,8 +108,8 @@ jobs:
 
           echo Publishing...
           cd bin/Release
-          dotnet nuget push StbiSharp.$VERSION.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+          dotnet nuget push phantombeta.StbiSharp.$VERSION.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
       - uses: actions/upload-artifact@master
         with:
           name: nuget-package
-          path: bin/Release/StbiSharp.${{ steps.datavars.outputs.version }}.nupkg
+          path: bin/Release/phantombeta.StbiSharp.${{ steps.datavars.outputs.version }}.nupkg
