@@ -93,5 +93,19 @@ jobs:
         with:
           name: win-x64
           path: runtimes/win-x64
-      - name: Build and pack nuget package
-        run: dotnet pack -c Release
+      - name: Get version, build, and pack
+        run: |
+          export GIT_HASH=${{ github.sha }}
+          export GIT_BRANCH=${GITHUB_REF#refs/heads/}
+          export VERSION=`dev-$(git rev-parse --short "$GIT_HASH")`
+          echo $VERSION $GIT_BRANCH
+
+          sed s/%COMMIT%/$GIT_HASH/ < stbi-sharp.csproj > stbi-sharp-build.csproj
+          sed s/%BRANCH%/$GIT_BRANCH/ < stbi-sharp.csproj > stbi-sharp-build.csproj
+
+          echo Building and packing...
+          dotnet pack stbi-sharp-build.csproj -c Release /p:Version=$VERSION
+      - uses: actions/upload-artifact@master
+        with:
+          name: nuget-package
+          path: bin/Release/StbiSharp.$VERSION.nupkg
