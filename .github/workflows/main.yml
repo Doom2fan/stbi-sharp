@@ -78,6 +78,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: Find latest version
+        id: findversion
+        uses: oprypin/find-latest-tag@v1.0.5
+        with:
+          repository: ${{ github.repository }}
+          prefix: 'v'
+          releases-only: false
+      - name: Setup data
+        id: datavars
+        run: |
+          echo "Latest tag is ${{ steps.findversion.outputs.tag }}"
+          export SHA_SHORT=$(git rev-parse --short ${{ github.sha }})
+          export TAG=$(echo ${{ steps.findversion.outputs.tag }} | awk '{ print substr( $0, 2 ) }')
+          echo "::set-output name=version::$TAG-$SHA_SHORT"
       - name: Grab linux binary
         uses: actions/download-artifact@master
         with:
@@ -97,15 +111,14 @@ jobs:
         run: |
           export GIT_HASH=${{ github.sha }}
           export GIT_BRANCH=${GITHUB_REF#refs/heads/}
-          export VERSION=`dev-$(git rev-parse --short "$GIT_HASH")`
+          export VERSION=${{ steps.datavars.outputs.version }}
           echo $VERSION $GIT_BRANCH
 
-          sed s/%COMMIT%/$GIT_HASH/ < stbi-sharp.csproj > stbi-sharp-build.csproj
-          sed s/%BRANCH%/$GIT_BRANCH/ < stbi-sharp.csproj > stbi-sharp-build.csproj
+          sed "s/%COMMIT%/$GIT_HASH/;s/%BRANCH%/$GIT_BRANCH/" < stbi-sharp.csproj > stbi-sharp-build.csproj
 
           echo Building and packing...
           dotnet pack stbi-sharp-build.csproj -c Release /p:Version=$VERSION
       - uses: actions/upload-artifact@master
         with:
           name: nuget-package
-          path: bin/Release/StbiSharp.$VERSION.nupkg
+          path: bin/Release/StbiSharp.${{ steps.datavars.outputs.version }}.nupkg
