@@ -30,9 +30,7 @@ extern "C" {
         }
 
         size_t nBytes = ((size_t)width * height) * nDesiredChannels;
-        for (size_t i = 0; i < nBytes; ++i) {
-            dst[i] = tmp[i];
-        }
+        memcpy(dst, tmp, nBytes);
 
         stbi_image_free(tmp);
         return true;
@@ -40,6 +38,22 @@ extern "C" {
 
     EXPORT bool InfoFromMemory(const unsigned char* data, int64_t len, int* w, int* h, int* nChannels) {
         return stbi_info_from_memory(data, (int)len, w, h, nChannels) == 1;
+    }
+
+    EXPORT bool IsHDRFromMemory(const unsigned char *data, int64_t len) {
+        return stbi_is_hdr_from_memory(data, (int)len) == 1;
+    }
+
+    EXPORT bool Is16BitFromMemory(const unsigned char *data, int64_t len) {
+        return stbi_is_16_bit_from_memory(data, (int)len) == 1;
+    }
+
+    EXPORT stbi_us *Load16FromMemory(const unsigned char *data, int64_t len, int *w, int *h, int *nChannels, int nDesiredChannels) {
+        return stbi_load_16_from_memory(data, (int)len, w, h, nChannels, nDesiredChannels);
+    }
+
+    EXPORT float *LoadFloatFromMemory(const unsigned char *data, int64_t len, int *w, int *h, int *nChannels, int nDesiredChannels) {
+        return stbi_loadf_from_memory(data, (int)len, w, h, nChannels, nDesiredChannels);
     }
 
     EXPORT unsigned char* LoadFromMemory(const unsigned char* data, int64_t len, int* w, int* h, int* nChannels, int nDesiredChannels) {

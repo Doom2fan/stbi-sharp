@@ -153,6 +153,26 @@ namespace StbiSharp
         unsafe public static extern bool InfoFromMemory(byte* data, long len, out int width, out int height, out int numChannels);
 
         /// <summary>
+        /// Determines whether an encoded image (in PNG, JPG, or another supported format; see the README of
+        /// https://github.com/nothings/stb/blob/master/stb_image.h for a list of supported formats) is 16-bit.
+        /// </summary>
+        /// <param name="data">Pointer to the beginning of the encoded image data.</param>
+        /// <param name="len">Number of bytes that the encoded image data is long.</param>
+        /// <returns>True if the image is 16-bit, false if not.</returns>
+        [DllImport ("stbi")]
+        unsafe public static extern bool Is16BitFromMemory (byte* data, long len);
+
+        /// <summary>
+        /// Determines whether an encoded image (in PNG, JPG, or another supported format; see the README of
+        /// https://github.com/nothings/stb/blob/master/stb_image.h for a list of supported formats) is HDR.
+        /// </summary>
+        /// <param name="data">Pointer to the beginning of the encoded image data.</param>
+        /// <param name="len">Number of bytes that the encoded image data is long.</param>
+        /// <returns>True if the image is HDR, false if not.</returns>
+        [DllImport ("stbi")]
+        unsafe public static extern bool IsHDRFromMemory (byte* data, long len);
+
+        /// <summary>
         /// Retrieves metadata from an encoded image (in PNG, JPG, or another supported format; see the README of
         /// https://github.com/nothings/stb/blob/master/stb_image.h for a list of supported formats)
         /// residing at <paramref name="data"/>.
@@ -203,6 +223,50 @@ namespace StbiSharp
         /// by pixel. Each pixel consists of N bytes where N is the number of channels, ordered RGBA.</returns>
         [DllImport("stbi")]
         unsafe public static extern byte* LoadFromMemory(byte* data, long len, out int width, out int height, out int numChannels, int desiredNumChannels);
+
+        /// <summary>
+        /// Loads an encoded 16-bit image (in PNG, JPG, or another supported format; see the README of
+        /// https://github.com/nothings/stb/blob/master/stb_image.h for a list of supported formats)
+        /// residing at <paramref name="data"/>.
+        /// </summary>
+        /// <param name="data">Pointer to the beginning of the encoded image data.</param>
+        /// <param name="len">Number of bytes that the encoded image data is long.</param>
+        /// <param name="width">The number of pixels the image is wide.</param>
+        /// <param name="height">The number of pixels the image is tall.</param>
+        /// <param name="numChannels">The number of colour channels of the image.</param>
+        /// <param name="desiredNumChannels">The number of desired colour channels in the output.
+        /// When the encoded image has fewer channels than the desired number of channels,
+        /// then the desired number of channels will be produced automatically. For example,
+        /// when the encoded image is RGB, but 4 channels are requested, then a fully opaque
+        /// alpha channel will be generated. Supplying a value of 0 means that the native number
+        /// of channels of the encoded image is used.</param>
+        /// <returns>Null on failure. On success, returns a pointer to the beginning of the buffer into which the
+        /// image was loaded. The loaded image will be stored in this buffer in row-major format, pixel
+        /// by pixel. Each pixel consists of N bytes where N is the number of channels, ordered RGBA.</returns>
+        [DllImport("stbi")]
+        unsafe public static extern byte* Load16FromMemory(byte* data, long len, out int width, out int height, out int numChannels, int desiredNumChannels);
+
+        /// <summary>
+        /// Loads an encoded floating-point image (in PNG, JPG, or another supported format; see the README of
+        /// https://github.com/nothings/stb/blob/master/stb_image.h for a list of supported formats)
+        /// residing at <paramref name="data"/>.
+        /// </summary>
+        /// <param name="data">Pointer to the beginning of the encoded image data.</param>
+        /// <param name="len">Number of bytes that the encoded image data is long.</param>
+        /// <param name="width">The number of pixels the image is wide.</param>
+        /// <param name="height">The number of pixels the image is tall.</param>
+        /// <param name="numChannels">The number of colour channels of the image.</param>
+        /// <param name="desiredNumChannels">The number of desired colour channels in the output.
+        /// When the encoded image has fewer channels than the desired number of channels,
+        /// then the desired number of channels will be produced automatically. For example,
+        /// when the encoded image is RGB, but 4 channels are requested, then a fully opaque
+        /// alpha channel will be generated. Supplying a value of 0 means that the native number
+        /// of channels of the encoded image is used.</param>
+        /// <returns>Null on failure. On success, returns a pointer to the beginning of the buffer into which the
+        /// image was loaded. The loaded image will be stored in this buffer in row-major format, pixel
+        /// by pixel. Each pixel consists of N bytes where N is the number of channels, ordered RGBA.</returns>
+        [DllImport ("stbi")]
+        unsafe public static extern byte* LoadFloatFromMemory (byte* data, long len, out int width, out int height, out int numChannels, int desiredNumChannels);
 
         /// <summary>
         /// Flip the image vertically, so the first pixel in the output array is the bottom left.
