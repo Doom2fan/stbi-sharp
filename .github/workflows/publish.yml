@@ -53,8 +53,8 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup MSBuild.exe
-        uses: warrenbuckley/Setup-MSBuild@v1
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1
 
       - name: Build
         run: |
